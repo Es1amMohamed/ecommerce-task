@@ -8,9 +8,27 @@ from django.contrib.auth import login
 
 
 class UserAuthenticatedView(viewsets.ViewSet):
+    """
+    A ViewSet for managing user authentication including registration and login.
+    """
 
     @action(detail=False, methods=["post"])
     def register(self, request):
+        """
+        Register a new user.
+
+            This action creates a new user based on the provided username and other details.
+            If the user already exists, a message indicating this will be returned.
+
+            Request Data:
+            - username: The username for the new user.
+            - Other user details as required by the UserSerializer.
+
+            Response:
+            - On successful registration: Serialized user data with HTTP 201 Created status.
+            - If the username already exists: Error message with HTTP 400 Bad Request status.
+            - If the provided data is invalid: Error details with HTTP 400 Bad Request status.
+        """
         data = request.data
         user_name = data.get("username")
         serializer = UserSerializer(data=data)
@@ -26,6 +44,20 @@ class UserAuthenticatedView(viewsets.ViewSet):
 
     @action(detail=False, methods=["post"])
     def login(self, request):
+        """
+        Authenticate a user and log them in.
+
+        This action logs in a user based on the provided username. If the user is found,
+        they will be logged in, and their data will be returned.
+
+        Request Data:
+        - username: The username of the user attempting to log in.
+
+        Response:
+        - On successful login: Serialized user data with HTTP 200 OK status.
+        - If the user is not found: Error message with HTTP 404 Not Found status.
+        """
+
         data = request.data
         user_name = data.get("username")
         user = User.objects.filter(username=user_name).first()

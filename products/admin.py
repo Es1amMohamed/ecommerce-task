@@ -1,3 +1,9 @@
 from django.contrib import admin
+from .models import ProductModel
 
-# Register your models here.
+
+@admin.register(ProductModel)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ["name", "price"]
+    list_filter = ["price"]
+    ordering = ["price"]
