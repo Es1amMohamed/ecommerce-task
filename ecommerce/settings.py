@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "users",
     "products",
     "cart",
+    "orders",
     ## 3rd party apps
     "rest_framework",
     "rest_framework_simplejwt",

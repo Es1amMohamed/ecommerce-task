@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -63,6 +64,17 @@ class UserAuthenticatedView(viewsets.ViewSet):
         user = User.objects.filter(username=user_name).first()
         if user:
             login(request, user)
+
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
             serializer = UserSerializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "user": serializer.data,
+                    "access": access_token,
+                    "refresh": str(refresh),
+                },
+                status=status.HTTP_200_OK,
+            )
         return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
