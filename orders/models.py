@@ -39,6 +39,9 @@ class OrderModel(models.Model):
     payment_method = models.CharField(
         max_length=20, choices=PAYMENT_METHOD, default="Cash"
     )
+    total_price = models.DecimalField(
+        null=True, blank=True, max_digits=8, decimal_places=2
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     slug = models.SlugField(null=True, blank=True)
@@ -54,3 +57,20 @@ class OrderModel(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.user.username)
         super(OrderModel, self).save(*args, **kwargs)
+
+
+class OrderItemModel(models.Model):
+    order = models.ForeignKey(
+        OrderModel, on_delete=models.CASCADE, related_name="order_items"
+    )
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "order items"
+        verbose_name = "order item"
+
+    def __str__(self):
+        return str(self.id)
